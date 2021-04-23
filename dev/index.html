@@ -1,0 +1,227 @@
+<!doctype html>
+<html>
+<head>
+  <title>Kinetics Dev</title>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <style>
+    body { background: #0E0333; color: #fff;}
+    section { min-height: 250vh; border-bottom: solid 1px; padding: 2em 1em; }
+    button { padding: 1em 2em; border: solid 1px; margin: 3em 0 0 5em; cursor: pointer; border-radius: 0.25em; font-size: 120%;}
+    button:hover { opacity: 0.8; }
+    a { margin: 0.25em 0.25em; }
+  </style>
+</head>
+<body>
+
+  <section data-kinetics-mode data-kinetics-mode-type="rain" data-kinetics-mode-speed="5"><span>rain<button data-kinetics-attraction='{"chance": 0.2}'>chance 0.2</button></span></section>
+  <section data-kinetics-mode data-kinetics-mode-type="wind-from-right"><span>wind-from-right<button data-kinetics-attraction='{"chance": 0.2}'>chance 0.2</button></span></section>
+  <section data-kinetics-mode data-kinetics-mode-type="wind-from-left" data-kinetics-mode-speed="15"><span>wind-from-left<button data-kinetics-attraction='{"chance": 0.2}'>chance 0.2</button></span></section>
+  <section data-kinetics-mode data-kinetics-mode-boundery="emitter" data-kinetics-mode-type="linear" data-kinetics-mode-speed="10"><span>linear emitter<button data-kinetics-attraction='{"chance": 0.2}'>chance 0.2</button></span></section>
+  <section data-kinetics-mode data-kinetics-mode-boundery="pong" data-kinetics-mode-type="linear" data-kinetics-mode-speed="10"><span>linear pong<button data-kinetics-attraction='{"chance": 0.2}'>chance 0.2</button></span></section>
+  <section data-kinetics-mode data-kinetics-mode-boundery="endless" data-kinetics-mode-type="linear"><span>linear endless<button data-kinetics-attraction='{"chance": 0.2}'>chance 0.2</button></span></section>
+
+
+
+  <section data-kinetics-mode data-kinetics-mode-type="wind-from-right">
+    <div style="position: fixed; top: 1em; right: 1em;">
+      <a href="#" style="color:#ff3333;border: solid 1px; padding: 0.5em;" onclick="togglePause()">pause</a>
+    </div>
+
+    <div>
+      <a style="color:#fff" href="#" data-kinetics-attraction>login</a>&nbsp;&nbsp;&nbsp;
+      <a style="color:#fff" href="#" data-kinetics-attraction data-kinetics-attraction-chance="0.8">Long text with text text</a>
+    </div>
+
+    <button data-kinetics-attraction='{"chance": 0.2}'>chance 0.2</button>
+    <button
+      data-kinetics-attraction
+      data-kinetics-attraction-chance="0.5"
+      data-kinetics-attraction-grow="5"
+    >chance 0.5, grow 5</button>
+    <button
+      data-kinetics-attraction
+      data-kinetics-attraction-chance="1"
+      data-kinetics-attraction-grow="-0.8"
+    >chance 1, grow -0.8</button>
+    <button
+      data-kinetics-attraction
+      data-kinetics-attraction-chance="0.5"
+      data-kinetics-attraction-force="0.8"
+    >chance 0.5, force 0.8</button>
+    <button
+      data-kinetics-attraction
+      data-kinetics-attraction-chance="0.5"
+      data-kinetics-attraction-force="0.5"
+    >chance 0.5, force 0.5</button>
+    <button
+      data-kinetics-attraction
+      data-kinetics-attraction-chance="0.5"
+      data-kinetics-attraction-force="1.2"
+    >chance 0.5, force 1.2</button>
+    <button
+      data-kinetics-attraction
+      data-kinetics-attraction-chance="1"
+      data-kinetics-attraction-force="3"
+    >chance 1, force 3</button>
+<!--    <button data-kinetics-attraction='{
+       "chance": 12,
+      "mode": "circle-around",
+      "particles": 3,
+      "resize": 1.5
+    }'
+    >circle</button> -->
+  </section>
+
+  <section>
+
+    <div style="padding: 1em;">
+      <img src="dummy.svg"
+        style="max-width:30%"
+        data-kinetics-attraction
+        data-kinetics-attraction-chance="0.8"
+        data-kinetics-attraction-force="1"
+        >
+      <img src="dummy.svg"
+      style="max-width:30%;margin:1em;"
+        data-kinetics-attraction
+        data-kinetics-attraction-chance="0.8"
+        data-kinetics-attraction-force="1"
+        >
+      <img src="dummy.svg"
+        style="max-width:30%"
+        data-kinetics-attraction
+        data-kinetics-attraction-chance="0.8"
+        data-kinetics-attraction-force="1"
+        >
+      <img src="dummy.svg"
+        style="max-width:30%"
+        data-kinetics-attraction
+        data-kinetics-attraction-chance="0.8"
+        data-kinetics-attraction-force="1"
+        >
+    </div>
+  </section>
+
+  <section>
+    <h1>summy static</h1>
+    <div style="padding: 1em;">
+      <img src="dummy.static.svg"
+        style="max-width:45%"
+        data-kinetics-attraction
+        data-kinetics-attraction-chance="0.8"
+        data-kinetics-attraction-force="1"
+        data-kinetics-attraction-grow="0.2"
+        >
+      <img src="dummy.static.svg"
+      style="max-width:45%;margin:1em;"
+        data-kinetics-attraction
+        data-kinetics-attraction-chance="0.8"
+        data-kinetics-attraction-force="1"
+        data-kinetics-attraction-grow="0.1"
+        >
+    </div>
+  </section>
+
+
+  <section data-kinetics-mode data-kinetics-mode-type="space" data-kinetics-mode-speed="1"><span>space</span></section>
+
+  <section data-kinetics-mode
+    data-kinetics-mode-type="party"
+    data-kinetics-mode-speed="15"
+    data-kinetics-mode-boundery="endless"
+
+  ><span>party</span>
+    <button
+      data-kinetics-attraction
+      (low-prio)__data-kinetics-click="{do: 'blow'}"
+    >Attracted?</button>
+  </section>
+
+  <section data-kinetics-mode
+    data-kinetics-mode-type="wind"
+    data-kinetics-mode-speed="5"
+    data-kinetics-mode-boundery="pong">
+    <span>wind pong</span>
+    <button
+      data-kinetics-attraction
+      data-kinetics-attraction-chance="0.5"
+      data-kinetics-attraction-particles="15"
+    >chance 0.5</button>
+    <button
+      data-kinetics-attraction
+      data-kinetics-attraction-chance="1"
+    >chance 1</button>
+    <button
+      data-kinetics-attraction
+      data-kinetics-attraction-chance="0.2"
+      data-kinetics-attraction-force="0.5"
+      data-kinetics-attraction-grow="10"
+    >chance 0.2, force 0.5, grow 10</button>
+    <button
+      data-kinetics-attraction
+      data-kinetics-attraction-chance="1"
+      data-kinetics-attraction-force="2"
+    >chance 1, force 2</button>
+  </section>
+
+
+
+
+  <!-- plugin initialization -->
+  <script src="kinetics.umd.js"></script>
+  <script>
+    document.addEventListener('DOMContentLoaded', function () {
+
+      // MINIMAL DEFAULT
+      // new Kinetics().interactionHook();
+
+      // Initialise and start Kinetics
+      // new Kinetics(); // This is enough to get things started
+      // or set the override configuration
+      const kinetics = new Kinetics({
+        // particles: { count: 100, size: {min: 1, max:10},  mode: {type: "party" }}
+        // particles: { count: 30, size: {min: 10, max:50}}
+      });
+
+      kinetics.interactionHook();
+
+      // Can get two *optional* parameters:
+      // 1. config: override configuration object
+      // kinetics.interactionHook({intersection: { threshold: [0.25, 0.75] }});
+      // 2. DOM element: parent element to start query from. default is `document`
+      // kinetics.interactionHook({}, document.getElementsByTagName("section")[1]);
+
+
+      // or set the configuration after initialisation (**NOTE: some parameters aren't dynamic, see README)
+      // kinetics.set({
+      //   particles: {
+      //     rotate: {speed:0.2},
+      //     mode: { type: "party", speed: 0.02 },
+      //     toColor: "#0E0333",
+      //     attract: { grow: 30 }
+      //   }
+      // });
+
+
+      // ** TEMP: DEBUG **
+      window.k = kinetics;  // TEMP DEBUG
+      window.togglePause = () => kinetics.paused = !kinetics.paused;
+
+
+/*
+          // HACK: TEST CLEANING UP AND RE-ADDING
+          setTimeout(function(){ kinetics.destroy(); }, 3000);
+          setTimeout(function(){
+            new Kinetics({
+              spring: { tension: 60 }
+            });
+          }, 4000);
+*/
+
+    });
+  </script>
+
+
+</body>
+</html>

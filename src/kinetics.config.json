@@ -1,0 +1,39 @@
+{
+  "debug": false,
+  "spring": {
+    "tension": 30,
+    "friction": 10,
+    "randomTension": 50,
+    "randomFriction": -4,
+    "extendedRestDelay": 10
+  },
+  "canvas": {
+    "handlePosition": true,
+    "background": ""
+  },
+  "particles": {
+    "count": 16,
+    "sides": {"min": 3, "max": 5},
+    "size": {"min": 5, "max": 10},
+    "rotate": {"speed": 1.5},
+    "mode": {
+      "type": "space",
+      "speed": 2,
+      "boundery": "endless"
+    },
+    "parallex": {
+      "layers": 3,
+      "speed": 0.15
+    },
+    "attract": {
+      "grow": 2
+    },
+    "fill": ["#6F3FF5","#02E2AC","#F35890"],
+    "toColor": "#66229933",
+    "opacity": "DD",
+    "stroke": {
+      "color": "",
+      "width": 1
+    }
+  }
+}
