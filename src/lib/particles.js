@@ -65,7 +65,7 @@ export default class Particles {
   }
 
 
-  attract(area, chance, gravity, grow) {
+  attract(area, chance, gravity, grow, mode) {
     if (isNaN(chance)) chance = 0.2;
     // if (isNaN(gravity)) gravity = 1;
     // if (isNaN(grow)) grow = 0;
@@ -75,10 +75,16 @@ export default class Particles {
     const shuffled = [].concat(this.particles);
     shuffled.sort(() => chance - Math.random());
     shuffled.forEach((p, i) => {
-      const pos = p.position;
-      // if (i===0) console.log(p);
-      const {x, y} = pointOnRect(pos.x, pos.y, area.left, area.top, area.right, area.bottom, false);
-      if (i/count < chance) p.attract(x, y, gravity, grow);
+      if (i/count < chance) {
+        const pos = p.position;
+        const point = pointOnRect(pos.x, pos.y, area.left, area.top, area.right, area.bottom, false);
+        const center = {
+          x: area.left + ((area.right - area.left) / 2),
+          y: area.top + ((area.bottom - area.top) / 2)
+        };
+
+        p.attract(point, center, gravity, grow, mode);
+      }
     });
   }
 

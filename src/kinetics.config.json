@@ -15,7 +15,7 @@
     "count": 16,
     "sides": {"min": 3, "max": 5},
     "size": {"min": 5, "max": 10},
-    "rotate": {"speed": 1.5},
+    "rotate": {"speed": 1.5, "direction": null},
     "mode": {
       "type": "space",
       "speed": 2,
@@ -26,7 +26,9 @@
       "speed": 0.15
     },
     "attract": {
-      "grow": 2
+      "grow": 2,
+      "mode": "static",
+      "rotate": {"speed": 2, "direction": -1}
     },
     "fill": ["#6F3FF5","#02E2AC","#F35890"],
     "toColor": "#66229933",

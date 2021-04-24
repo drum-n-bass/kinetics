@@ -296,7 +296,7 @@ const Kinetics = (function () {
   Kinetics.prototype.attract = function(area, props) {
     // if (this.config.debug) console.log("attract", area, force, gravity);
     if (this.config.debug) console.log("attract", area, props);
-    this.particles.attract(area, props.chance, props.force, props.grow);
+    this.particles.attract(area, props.chance, props.force, props.grow, props.mode);
   }
 
   Kinetics.prototype.unattract = function() {

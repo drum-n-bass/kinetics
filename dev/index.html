@@ -25,7 +25,7 @@
 
   <section data-kinetics-mode data-kinetics-mode-type="wind-from-right">
     <div style="position: fixed; top: 1em; right: 1em;">
-      <a href="#" style="color:#ff3333;border: solid 1px; padding: 0.5em;" onclick="togglePause()">pause</a>
+      <a href="#" style="color:#ff3333;border: solid 1px; padding: 0.5em;" onclick="togglePause(); return false">pause</a>
     </div>
 
     <div>
@@ -34,16 +34,42 @@
     </div>
 
     <button data-kinetics-attraction='{"chance": 0.2}'>chance 0.2</button>
+
+    <button
+      data-kinetics-attraction
+      data-kinetics-attraction-chance="1"
+      data-kinetics-attraction-grow="1.8"
+    >chance 1, grow 1.8</button>
+    <button
+      data-kinetics-attraction
+      data-kinetics-attraction-chance="1"
+      data-kinetics-attraction-grow="1.8"
+      data-kinetics-attraction-mode="drone"
+    >chance 1, grow 1.8, mode drone</button>
+    <button
+      data-kinetics-attraction
+      data-kinetics-attraction-chance="1"
+      data-kinetics-attraction-grow="1.8"
+      data-kinetics-attraction-mode="horz"
+    >chance 1, grow 1.8, mode horz</button>
+    <button
+      data-kinetics-attraction
+      data-kinetics-attraction-chance="1"
+      data-kinetics-attraction-grow="1.8"
+      data-kinetics-attraction-mode="horz"
+    >chance 1, grow 1.8, mode horz</button>
+    <button
+      data-kinetics-attraction
+      data-kinetics-attraction-chance="1"
+      data-kinetics-attraction-grow="1.8"
+      data-kinetics-attraction-mode="static"
+    >chance 1, grow 1.8, mode static (default)</button>
+
     <button
       data-kinetics-attraction
       data-kinetics-attraction-chance="0.5"
       data-kinetics-attraction-grow="5"
     >chance 0.5, grow 5</button>
-    <button
-      data-kinetics-attraction
-      data-kinetics-attraction-chance="1"
-      data-kinetics-attraction-grow="-0.8"
-    >chance 1, grow -0.8</button>
     <button
       data-kinetics-attraction
       data-kinetics-attraction-chance="0.5"
@@ -111,14 +137,16 @@
         data-kinetics-attraction
         data-kinetics-attraction-chance="0.8"
         data-kinetics-attraction-force="1"
-        data-kinetics-attraction-grow="0.2"
+        data-kinetics-attraction-grow="2"
+        data-kinetics-attraction-mode="horz"
         >
       <img src="dummy.static.svg"
       style="max-width:45%;margin:1em;"
         data-kinetics-attraction
         data-kinetics-attraction-chance="0.8"
         data-kinetics-attraction-force="1"
-        data-kinetics-attraction-grow="0.1"
+        data-kinetics-attraction-grow="0.5"
+        data-kinetics-attraction-mode="drone"
         >
     </div>
   </section>

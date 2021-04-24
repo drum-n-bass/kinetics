@@ -103,6 +103,6 @@ function isPassiveSupported() {
     window.addEventListener("testPassive", null, opts);
     window.removeEventListener("testPassive", null, opts);
   } catch (e) {}
-  console.log(supportsPassive);
+
   return supportsPassive;
 }

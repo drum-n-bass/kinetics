@@ -16,9 +16,9 @@ export default class Particle {
     this.color = Math.floor(Math.random() * config.particles.fill.length);  // select initial color
 
     this.springPosition = 0;
-    this.position = {x: 0, y: 0}
-    this.attractTo = {x: 0, y: 0}
-    this.attractGrow = 0;
+    this.position = { x: 0, y: 0 }
+    this.attractTo = { x: 0, y: 0, center: { x: 0, y: 0 } }
+    this.attractConfig = { grow: 0, mode: "" }
     this.resetFlip();
 
     this.seedX = Math.random();
@@ -27,9 +27,6 @@ export default class Particle {
     // this.canvasWidth = 0;
     // this.canvasHeight = 0;
 
-    // this.shape = this.generateShape();
-    // console.log(this.shape);
-
 
     // initialise spring
     this.spring = springSystem.createSpring(
@@ -37,7 +34,7 @@ export default class Particle {
       config.spring.friction + (this.seedY * config.spring.randomFriction)
     );
 
-    this.onSpringAtRest = this.onSpringAtRest.bind(this);
+    // this.onSpringAtRest = this.onSpringAtRest.bind(this);
     this.onSpringUpdate = this.onSpringUpdate.bind(this);
     this.spring.addListener({
       onSpringUpdate: this.onSpringUpdate,
@@ -67,12 +64,12 @@ export default class Particle {
   /**
    * Spring entered resting poition
    */
-  onSpringAtRest(spring) {
-    if (this.config.debug) console.log("onSpringAtRest");
-    // Activate re-chaos flag after some time
-    // if (this.onRestTimeout) clearTimeout(this.onRestTimeout);
-    // this.onRestTimeout = setTimeout(onExtendedRest, this.config.spring.extendedRestDelay * 1000); // when would a user normally scroll "again", while it should "feel" the same scroll?
-  }
+  // onSpringAtRest(spring) {
+  //   if (this.config.debug) console.log("onSpringAtRest");
+  //   // Activate re-chaos flag after some time
+  //   // if (this.onRestTimeout) clearTimeout(this.onRestTimeout);
+  //   // this.onRestTimeout = setTimeout(onExtendedRest, this.config.spring.extendedRestDelay * 1000); // when would a user normally scroll "again", while it should "feel" the same scroll?
+  // }
 
   /**
    * Spring is in extended rest  (long time)
@@ -99,9 +96,12 @@ export default class Particle {
     // this.drawPaths();
   }
 
-  attract(x, y, endval = 1, grow) {
-    this.attractTo = { x, y };
-    this.attractGrow = typeof grow === 'number' ? grow : this.config.particles.attract.grow;
+  attract(point, center, endval = 1, grow, mode) {
+    this.attractTo = {...point, center };
+    this.attractConfig = {
+      grow: (typeof grow === 'number' ? grow : this.config.particles.attract.grow),
+      mode: (typeof mode === 'string' ? mode : this.config.particles.attract.mode)
+    }
     this.spring.setEndValue(endval);
     this.isAttracted = true;
   }
@@ -132,10 +132,40 @@ export default class Particle {
   }
 */
 
+  attractPosition() {
+    let {x, y} = this.attractTo;
+    if (this.isAttracted || !this.spring.isAtRest()) {
+      const { mode } = this.attractConfig;
+      const { speed, direction } = this.config.particles.attract.rotate;
+      const angle = this.getAngle(direction, speed)
+      const { x: cx, y: cy } = this.attractTo.center;
+
+      switch (mode) {
+        case "":
+        case "static":
+          // (nothing)
+          break;
+
+        case "drone":
+          x = Math.cos(angle) * (x-cx) - Math.sin(angle) * (y-cy) + cx;
+          y = Math.sin(angle) * (x-cx) + Math.cos(angle) * (y-cy) + cy;
+          break;
+
+        case "horz":
+          x = Math.cos(angle) * (x-cx) - Math.sin(angle) * (y-cy) + cx;
+          break;
+
+        default: //
+          throw new Error("invalid mode: " + mode);
+      }
+    }
+    return {x, y};
+  }
+
   modulatePosition(pos, mode) {
     // let pos = {x: 0, y: 0};
     const {type, speed, boundery} = mode;
-    switch(type){
+    switch(type) {
 
 
       case "wind-from-right":
@@ -175,6 +205,9 @@ export default class Particle {
         // pos.x -= speed * Math.floor(Math.random() * 2) - 1;
         // pos.y += speed * Math.floor(Math.random() * 2) - 1;
         break;
+
+      default: //
+        throw new Error("invalid type: " + type);
     }
 
     pos = this.modulateBounderies(pos, boundery);
@@ -253,132 +286,75 @@ export default class Particle {
   }
 
 
-  // generateShape() {
-  //   // generate shape
-  //   let points = Array.from(Array(this.sides)).map((_, i) => {
-  //     let _x = /* x + */ this.size * Math.cos(i * 2 * Math.PI / this.sides);
-  //     let _y = /* y + */ this.size * Math.sin(i * 2 * Math.PI / this.sides);
-  //     if (i%3 === 0) {  // strech first point, to make it "polygon" styled
-  //       _x += this.seedX * this.config.particles.polystrech.x;
-  //       _y += this.seedY * this.config.particles.polystrech.y;
-  //     }
-  //     return [_x, _y];
-  //   });
-
-
-  //   const [centerX, centerY] = this.center(points);
-  //   // var cx = 0; cy = 0;
-  //   // for (const p of points) {
-  //   //     cx += p.x;
-  //   //     cy += p.y;
-  //   // }
-  //   // cx /= points.length;
-  //   // cy /= points.length;
-
-  //   const path = new Path2D;
-  //   for (const p of points) { path.lineTo(p[0] - centerX, p[1] - centerY); }
-  //   path.closePath();
-  //   return path;
-  // }
-
-  generateShape(x, y) {
+  /**
+   * Generate shape
+   * @param  {number} x     center x
+   * @param  {number} y     center y
+   * @return {array}        array of vertices
+   */
+  generateVertices(x, y) {
     // dynamically resize on attract/spring
+    const { grow } = this.attractConfig;
     const attractSizing = (
-      this.springPosition * (
-        this.attractGrow >= 1 ? this.attractGrow : this.attractGrow - 1
-      )
+      this.springPosition * ( grow >= 1 ? grow : grow - 1 )
     ) + 1;
 
-/*
-    return Array.from(Array(this.sides)).map((_, i) => {
-      let _x = x + this.size * Math.cos(i * 2 * Math.PI / this.sides) * attractSizing;
-      let _y = y + this.size * Math.sin(i * 2 * Math.PI / this.sides) * attractSizing;
-      if (i%3 === 0) {  // strech a point, to make it "polygon" styled
-        _x += this.seedX * this.config.particles.polystrech.x;
-        _y += this.seedY * this.config.particles.polystrech.y;
-      }
-      return [_x, _y];
-    });
-*/
+
+    const { speed, direction } = this.config.particles.rotate;
+    const angle = this.getAngle(direction, speed)
 
     return Array.from(Array(this.sides)).map((_, i) => {
       const slice = 360/this.sides;
-      const angle = ((this.sidesSeeds[i] * slice) + (i * slice)) * Math.PI / 180;
+      const posAngle = ((this.sidesSeeds[i] * slice) + (i * slice)) * Math.PI / 180;
       const length = this.getNumberInRange(this.config.particles.size, this.sidesSeeds[i]);
 
-      const _x = x + (length * Math.cos(angle) * attractSizing);
-      const _y = y + (length * Math.sin(angle) * attractSizing);
-      return [_x, _y];
-
-
-      // let _x = x + this.size * Math.cos(i * 2 * Math.PI / this.sides) * attractSizing;
-      // let _y = y + this.size * Math.sin(i * 2 * Math.PI / this.sides) * attractSizing;
-      // if (i%3 === 0) {  // strech a point, to make it "polygon" styled
-      //   _x += this.seedX * this.config.particles.polystrech.x;
-      //   _y += this.seedY * this.config.particles.polystrech.y;
-      // }
-      // return [_x, _y];
+      const vx = (length * Math.cos(posAngle) * attractSizing);
+      const vy = (length * Math.sin(posAngle) * attractSizing);
+      return {
+        x: x + vx * Math.cos(angle) - vy * Math.sin(angle),
+        y: y + vx * Math.sin(angle) + vy * Math.cos(angle)
+      }
     });
+  }
 
 
+  getAngle(direction, speed) {
+    const angle = (this.ctx.frameCount * speed)%360
+                  * ( Number.isInteger(direction) ? direction : (this.seedX > 0.5 ? 1 : -1) );  // if not set, randomly set rotate direction (positive/negative)
+    return angle * Math.PI / 180;  // in Radians
+  }
+
+  getPosition() {
+    // Modulate position
+    if (!this.isAttracted) {
+      this.position = this.modulatePosition(this.position, this.config.particles.mode);
+      if (this.spring.isAtRest()) return this.position;  // (optional) performance. we don't need to continue calculating...
+    }
+
+    // Modulate attraction position
+    let {x, y} = this.attractPosition();
+    x = rebound.MathUtil.mapValueInRange(this.springPosition, 0, 1, this.position.x, x);
+    y = rebound.MathUtil.mapValueInRange(this.springPosition, 0, 1, this.position.y, y);
+    return {x, y};
   }
 
 
   update() {
     if (typeof this.canvasWidth === 'undefined') return;  // not yet initialised?
-
-    // Size
-    //this.size += (Math.random());
-    //if (this.size > 20) this.size -= 2;
-
-    // Set position
-    if (!this.isAttracted) {
-      this.position = this.modulatePosition(this.position, this.config.particles.mode);
-    }
-
-
-    // const { x, y } = {x: 100, y: 200 };
-    // TODO: in-efficient,  override when not animating attract
-    const toX = this.attractTo.x;// + ((this.seedX - 0.5) * 100);
-    const toY = this.attractTo.y;// + ((this.seedY - 0.5) * 100)
-    const x = rebound.MathUtil.mapValueInRange(this.springPosition, 0, 1, this.position.x, toX);
-    const y = rebound.MathUtil.mapValueInRange(this.springPosition, 0, 1, this.position.y, toY);
-
-    let points = this.generateShape(x, y);
-    // console.log(points);
-
-
-    // ** rotate polygon around its center
-    // const angle = this.seedX * (180 + points[0][1]%360 * (this.seedX > 0.5 ? 1 : -1));
-    const angle = (this.ctx.frameCount * this.config.particles.rotate.speed)%360
-                * (this.seedX > 0.5 ? 1 : -1);  // randomly set rotate direction (positive/negative)
-    const a = angle * Math.PI / 180;
-    // const [centerX, centerY] = this.center(points);
-    const centerX = x;
-    const centerY = y;
-    points = points.map(p => {
-      return [
-        Math.floor((p[0] - centerX) * Math.cos(a) - (p[1] - centerY) * Math.sin(a) + centerX),
-        Math.floor((p[0] - centerX) * Math.sin(a) + (p[1] - centerY) * Math.cos(a) + centerY)
-      ];
-    });
-
-    this.points = points;
+    const {x, y} = this.getPosition();
+    this.vertices = this.generateVertices(x, y);
     // this.life--;
-
   }
 
   draw() {
     if (typeof this.canvasWidth === 'undefined') return;  // not yet initialised?
 
-
     this.ctx.beginPath();
-    // this.ctx.moveTo (this.points[0][0], this.points[0][1]);
-    this.points.forEach(p => this.ctx.lineTo(p[0], p[1]));
+    // this.ctx.moveTo (this.vertices[0][0], this.vertices[0][1]);
+    this.vertices.forEach(p => this.ctx.lineTo(p.x, p.y));
     this.ctx.closePath();
 
     // ** COLOR **
-    // const pos = Math.abs(Math.sin(this.points[0][0] * Math.PI / 180)); // * (this.seedX > 0.5 ? 1 : -1));
     const pos = Math.abs(Math.sin(this.ctx.frameCount * this.seedX * Math.PI / 180));
     // this.color++; if (this.color >= this.config.particles.fill.length) this.color = 0;  // TODO: HACK
     const fromColor = this.config.particles.fill[this.color];
@@ -387,13 +363,13 @@ export default class Particle {
 
     // ** FILL **
     this.ctx.fillStyle = color + this.config.particles.opacity;
-    this.ctx.fill(this.shape);
+    this.ctx.fill();
 
     // ** STROKE **
     if (this.config.particles.stroke.color) {
       this.ctx.strokeStyle = this.config.particles.stroke.color + this.config.particles.opacity;
       this.ctx.lineWidth = this.config.particles.stroke.width;
-      this.ctx.stroke(this.shape);
+      this.ctx.stroke();
     }
   }
 
