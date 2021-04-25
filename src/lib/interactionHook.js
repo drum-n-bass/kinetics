@@ -20,14 +20,14 @@ export default (kinetics, config = {}, scope = document) => {
 
   scope.querySelectorAll(`[data-${prefix}-${attraction.keyword}]`).forEach(element => {
     const props = getProps(element, prefix, attraction.keyword);
-    const touchOptions = isPassiveSupported() ? { passive: true } : false;
+    // const touchOptions = isPassiveSupported() ? { passive: true } : false;
 
     // Hook interaction events
     element.addEventListener("mouseenter", evt => kinetics.attract(evt.target.getBoundingClientRect(), props), false);
-    element.addEventListener("touchstart", evt => kinetics.attract(evt.target.getBoundingClientRect(), props), touchOptions);
+    // element.addEventListener("touchstart", evt => kinetics.attract(evt.target.getBoundingClientRect(), props), touchOptions);
 
     element.addEventListener("mouseleave", evt => kinetics.unattract(), false);
-    element.addEventListener("touchend",   evt => kinetics.unattract(), touchOptions);
+    // element.addEventListener("touchend",   evt => kinetics.unattract(), touchOptions);
 
     element.addEventListener("mousemove", evt => kinetics.bump(evt.offsetX, evt.offsetY, evt.movementX, evt.movementY), false);
   });
