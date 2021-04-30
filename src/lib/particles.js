@@ -65,15 +65,11 @@ export default class Particles {
   }
 
 
-  attract(area, chance, gravity, grow, mode) {
-    if (isNaN(chance)) chance = 0.2;
-    // if (isNaN(gravity)) gravity = 1;
-    // if (isNaN(grow)) grow = 0;
-    // if (isNaN(rotationSpeed)) rotationSpeed = 1;
-
+  attract(area, config) {
+    const { chance } = config;
     const count = this.particles.length;
-    const shuffled = [].concat(this.particles);
-    shuffled.sort(() => chance - Math.random());
+    const shuffled = [].concat(this.particles)
+                       .sort(() => Math.random());
     shuffled.forEach((p, i) => {
       if (i/count < chance) {
         const pos = p.position;
@@ -83,7 +79,7 @@ export default class Particles {
           y: area.top + ((area.bottom - area.top) / 2)
         };
 
-        p.attract(point, center, gravity, grow, mode);
+        p.attract(point, center, config);
       }
     });
   }
@@ -170,12 +166,12 @@ export default class Particles {
 
   }
 
-  setCanvasSize(width, height) {
+  canvasResized(width, height) {
     this.width = width;
     this.height = height;
 
     this.particles.forEach(p => {
-      p.setCanvasSize(width, height);
+      p.canvasResized(width, height);
     });
 
 

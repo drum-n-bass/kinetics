@@ -83,11 +83,11 @@ const Kinetics = (function () {
   }
 
   Kinetics.prototype.set = function(options = {}) {
-    if (typeof options === 'object' && options !== null) {
+    // if (typeof options === 'object' && options !== null) {
       this.config = merge(this.originalConfig, options);  // important: we use originalConfig (and not config). so each call to .set() resets the config back to original.
       this.particles.set(this.config);
-    }
-    else this.particles.set(options);
+    // }
+    // else this.particles.set(options);
   }
 
 
@@ -259,13 +259,10 @@ const Kinetics = (function () {
 
     const width = window.innerWidth;
     const height = window.innerHeight;
-
     if (_this.config.debug) console.log("Resize observed: Width " + width + "px, Height " + height + "px");
 
     _this.setupCanvas(width, height);
-    // _this.kicker();
-
-    _this.particles.setCanvasSize(width, height);
+    _this.particles.canvasResized(width, height);
   }
 
   /**
@@ -296,7 +293,8 @@ const Kinetics = (function () {
   Kinetics.prototype.attract = function(area, props) {
     // if (this.config.debug) console.log("attract", area, force, gravity);
     if (this.config.debug) console.log("attract", area, props);
-    this.particles.attract(area, props.chance, props.force, props.grow, props.mode);
+    // this.particles.attract(area, props.chance, props.force, props.grow, props.type);
+    this.particles.attract(area, merge(config.particles.attract, props));
   }
 
   Kinetics.prototype.unattract = function() {

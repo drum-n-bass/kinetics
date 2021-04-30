@@ -38,31 +38,78 @@
     <button
       data-kinetics-attraction
       data-kinetics-attraction-chance="1"
-      data-kinetics-attraction-grow="1.8"
-    >chance 1, grow 1.8</button>
+      data-kinetics-attraction-size="50"
+    >chance 1, size 50</button>
+    <button
+      data-kinetics-attraction
+      data-kinetics-attraction-chance="1"
+      data-kinetics-attraction-grow="3"
+    >chance 1, grow 3</button>
     <button
       data-kinetics-attraction
       data-kinetics-attraction-chance="1"
       data-kinetics-attraction-grow="1.8"
-      data-kinetics-attraction-mode="drone"
-    >chance 1, grow 1.8, mode drone</button>
+      data-kinetics-attraction-type="drone"
+      data-kinetics-attraction-force="1.2"
+      style="height: 8em"
+    >chance 1, grow 1.8, mode drone, force 1.2</button>
+
+
+    <br>
+    <button
+      data-kinetics-attraction
+      __data-kinetics-attraction-force="0.5"
+      data-kinetics-attraction-radius="0.5"
+      data-kinetics-attraction-grow="2.8"
+      data-kinetics-attraction-type="orbit"
+      data-kinetics-attraction-speed="1.5"
+      data-kinetics-attraction-direction="1"
+      style="height: 90vh;width: calc(90vw - 8em);opacity: 0.25;"
+    >grow 1.8, mode orbit, radius 0.5</button>
+    <button
+      data-kinetics-attraction
+      data-kinetics-attraction-size="5"
+      data-kinetics-attraction-type="orbit"
+      data-kinetics-attraction-speed="2"
+      data-kinetics-attraction-direction="-1"
+      style="height: 8em"
+    >grow 1.2, mode orbit, direction -1</button>
+    <button
+      data-kinetics-attraction
+      data-kinetics-attraction-grow="1.2"
+      data-kinetics-attraction-type="orbit"
+      data-kinetics-attraction-speed="2"
+      data-kinetics-attraction-direction=""
+      style="height: 8em"
+    >grow 1.2, mode orbit, direction '' (random)</button>
+    <br>
+
+
+    <button
+      data-kinetics-attraction
+      data-kinetics-attraction-chance="0.75"
+      data-kinetics-attraction-grow="1.2"
+      data-kinetics-attraction-type="bee"
+      data-kinetics-attraction-speed="1.5"
+      style="height: 8em"
+    >chance 0.75, grow 1.2, mode bee, speed 1.5</button>
     <button
       data-kinetics-attraction
       data-kinetics-attraction-chance="1"
       data-kinetics-attraction-grow="1.8"
-      data-kinetics-attraction-mode="horz"
+      data-kinetics-attraction-type="horz"
     >chance 1, grow 1.8, mode horz</button>
     <button
       data-kinetics-attraction
       data-kinetics-attraction-chance="0.5"
-      data-kinetics-attraction-grow="1"
-      data-kinetics-attraction-mode="horz"
-    >chance 0.5, grow 1, mode horz</button>
+      data-kinetics-attraction-type="vert"
+      data-kinetics-attraction-grow="3"
+    >chance 0.5, grow 1, mode vert</button>
     <button
       data-kinetics-attraction
       data-kinetics-attraction-chance="1"
       data-kinetics-attraction-grow="1.8"
-      data-kinetics-attraction-mode="static"
+      data-kinetics-attraction-type="static"
     >chance 1, grow 1.8, mode static (default)</button>
 
     <button
@@ -138,15 +185,23 @@
         data-kinetics-attraction-chance="0.8"
         data-kinetics-attraction-force="1"
         data-kinetics-attraction-grow="2"
-        data-kinetics-attraction-mode="horz"
+        data-kinetics-attraction-type="horz"
         >
       <img src="dummy.static.svg"
       style="max-width:45%;margin:1em;"
         data-kinetics-attraction
         data-kinetics-attraction-chance="0.8"
         data-kinetics-attraction-force="1"
-        data-kinetics-attraction-grow="0.75"
-        data-kinetics-attraction-mode="drone"
+        data-kinetics-attraction-grow="1.2"
+        data-kinetics-attraction-type="drone"
+        >
+      <img src="dummy.static.svg"
+      style="max-width:45%;margin:1em;"
+        data-kinetics-attraction
+        data-kinetics-attraction-chance="0.8"
+        data-kinetics-attraction-force="1"
+        data-kinetics-attraction-grow="1.2"
+        data-kinetics-attraction-type="orbit"
         >
     </div>
   </section>
@@ -208,8 +263,8 @@
       // new Kinetics(); // This is enough to get things started
       // or set the override configuration
       const kinetics = new Kinetics({
-        // particles: { count: 100, size: {min: 1, max:10},  mode: {type: "party" }}
-        // particles: { count: 30, size: {min: 10, max:50}}
+        // particles: { count: 100, sizes: {min: 1, max:10},  mode: {type: "party" }}
+        // particles: { count: 30, sizes: {min: 10, max:50}}
       });
 
       kinetics.interactionHook();

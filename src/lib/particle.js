@@ -11,14 +11,14 @@ export default class Particle {
     this.sidesSeeds = Array.from(Array(this.sides)).map((_,i) => Math.random());
 
     // this.size = this.getNumberInRange(config.particles.size);
-    this.life = 1000;  // TODO
+    // this.life = 1000;  // TODO
 
     this.color = Math.floor(Math.random() * config.particles.fill.length);  // select initial color
 
     this.springPosition = 0;
     this.position = { x: 0, y: 0 }
     this.attractTo = { x: 0, y: 0, center: { x: 0, y: 0 } }
-    this.attractConfig = { grow: 0, mode: "" }
+    this.attractConfig = {chance: 1, direction: 1, force: 1, grow: 1, radius: 1, size: null, speed: 1, type: "" };
     this.resetFlip();
 
     this.seedX = Math.random();
@@ -96,13 +96,11 @@ export default class Particle {
     // this.drawPaths();
   }
 
-  attract(point, center, endval = 1, grow, mode) {
+  // attract(point, center, endval = 1, grow, mode) {
+  attract(point, center, config) {
     this.attractTo = {...point, center };
-    this.attractConfig = {
-      grow: (typeof grow === 'number' ? grow : this.config.particles.attract.grow),
-      mode: (typeof mode === 'string' ? mode : this.config.particles.attract.mode)
-    }
-    this.spring.setEndValue(endval);
+    this.attractConfig = config;
+    this.spring.setEndValue(config.force);
     this.isAttracted = true;
   }
 
@@ -135,28 +133,56 @@ export default class Particle {
   attractPosition() {
     let {x, y} = this.attractTo;
     if (this.isAttracted || !this.spring.isAtRest()) {
-      const { mode } = this.attractConfig;
-      const { speed, direction } = this.config.particles.attract.rotate;
-      const angle = this.getAngle(direction, speed)
-      const { x: cx, y: cy } = this.attractTo.center;
+      const { type, speed, direction, radius } = this.attractConfig;
 
-      switch (mode) {
+      // TODO: these only needed on some modes
+      // const { speed, direction } = this.config.particles.attract.rotate;  // TODO: get from attractConfig
+      const angle = this.getAngle(direction, (this.seedX * speed) + speed)
+      const cos = Math.cos(angle);
+      const sin = Math.sin(angle);
+      const { x: cx, y: cy } = this.attractTo.center;
+      const rx = (x - cx) * radius;
+      const ry = (y - cy) * radius;
+
+      // console.log(cx, cy);
+
+      switch (type) {
         case "":
         case "static":
           // (nothing)
           break;
 
         case "drone":
-          x = Math.cos(angle) * (x-cx) - Math.sin(angle) * (y-cy) + cx;
-          y = Math.sin(angle) * (x-cx) + Math.cos(angle) * (y-cy) + cy;
+          // x = cos * (rx) - sin * (ry) + cx;
+          // y = sin * (rx) + cos * (ry) + cy;
+
+          // x = cx + cos * (rx) + sin * (ry);
+          // y = cy + sin * (ry);// + cos * (ry);
+
+          x = cx + cos * Math.abs(rx) - sin * (ry);
+          y = cy + sin * Math.abs(ry) + cos * (ry);
+
           break;
 
         case "horz":
-          x = Math.cos(angle) * (x-cx) - Math.sin(angle) * (y-cy) + cx;
+          x = Math.cos(angle) * rx + cx;
+          break;
+        case "vert":
+          y = Math.sin(angle) * ry + cy;
           break;
 
+        case "orbit":
+          x = cx + cos * Math.abs(rx) - sin * Math.abs(ry);
+          y = cy + sin * Math.abs(rx) + cos * Math.abs(ry);
+          break;
+
+        case "bee":
+          x = cx + Math.abs(rx) / 2 * cos * sin;
+          y = cy + Math.abs(ry) * cos;
+          break
+
         default: //
-          throw new Error("invalid mode: " + mode);
+          throw new Error("invalid type: " + type);
       }
     }
     return {x, y};
@@ -184,9 +210,9 @@ export default class Particle {
         break;
 
       case "rain":
-        // pos.x = pos.x + Math.cos(Math.PI - (Math.PI * this.seedX)) * speed * this.flip.x;
-        pos.x = pos.x - (0.65 * speed) * this.flip.x;
-        pos.y = pos.y + ((this.seedY * speed) + speed) * this.flip.y;
+        const _v = ((this.seedY * speed) + speed);
+        pos.x = pos.x - (_v / 2) * this.flip.x;
+        pos.y = pos.y + _v * this.flip.y;
         break;
 
       ///////////////
@@ -223,7 +249,7 @@ export default class Particle {
   modulateBounderies(pos, mode) {
     let x = pos.x;
     let y = pos.y;
-    const size = this.config.particles.size.max;  // used to enlarge range with
+    const size = this.config.particles.sizes.max;  // used to enlarge range with
     const gap = size / 2;
 
     let outside = "";
@@ -294,22 +320,25 @@ export default class Particle {
    */
   generateVertices(x, y) {
     // dynamically resize on attract/spring
-    const { grow } = this.attractConfig;
-    const attractSizing = (
-      this.springPosition * ( grow >= 1 ? grow : grow - 1 )
-    ) + 1;
+    const { grow, size } = this.attractConfig;
+    let attractSizing = 1;
+    if (!size) attractSizing += this.springPosition * ( grow >= 1 ? grow : grow - 1 );
 
-
-    const { speed, direction } = this.config.particles.rotate;
+    const { sizes, rotate: { speed, direction } } = this.config.particles;
     const angle = this.getAngle(direction, speed)
 
     return Array.from(Array(this.sides)).map((_, i) => {
       const slice = 360/this.sides;
       const posAngle = ((this.sidesSeeds[i] * slice) + (i * slice)) * Math.PI / 180;
-      const length = this.getNumberInRange(this.config.particles.size, this.sidesSeeds[i]);
+      let length = this.getNumberInRange(sizes, this.sidesSeeds[i]);
 
-      const vx = (length * Math.cos(posAngle) * attractSizing);
-      const vy = (length * Math.sin(posAngle) * attractSizing);
+      if (size) {  // attract to fixed size?
+        const attractFixedSize = size * this.sidesSeeds[i];
+        length = (1 - this.springPosition) * length + this.springPosition * attractFixedSize;  // transition between original and fixed size
+      }
+
+      const vx = length * Math.cos(posAngle) * attractSizing;
+      const vy = length * Math.sin(posAngle) * attractSizing;
       return {
         x: x + vx * Math.cos(angle) - vy * Math.sin(angle),
         y: y + vx * Math.sin(angle) + vy * Math.cos(angle)
@@ -340,14 +369,14 @@ export default class Particle {
 
 
   update() {
-    if (typeof this.canvasWidth === 'undefined') return;  // not yet initialised?
+    // if (typeof this.canvasWidth === 'undefined') return;  // not yet initialised?
     const {x, y} = this.getPosition();
     this.vertices = this.generateVertices(x, y);
     // this.life--;
   }
 
   draw() {
-    if (typeof this.canvasWidth === 'undefined') return;  // not yet initialised?
+    // if (typeof this.canvasWidth === 'undefined') return;  // not yet initialised?
 
     this.ctx.beginPath();
     // this.ctx.moveTo (this.vertices[0][0], this.vertices[0][1]);
@@ -373,9 +402,10 @@ export default class Particle {
     }
   }
 
-  setCanvasSize(width, height) {
+  canvasResized(width, height) {
     this.canvasWidth = width;
     this.canvasHeight = height;
+    // spread particles throughout the canvas
     this.position = {x: Math.floor(this.seedX * width), y: Math.floor(this.seedY * height)};
   }
 }

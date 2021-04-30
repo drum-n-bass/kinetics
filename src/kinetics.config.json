@@ -1,7 +1,7 @@
 {
   "debug": false,
   "spring": {
-    "tension": 30,
+    "tension": 8,
     "friction": 10,
     "randomTension": 50,
     "randomFriction": -4,
@@ -14,7 +14,7 @@
   "particles": {
     "count": 16,
     "sides": {"min": 3, "max": 5},
-    "size": {"min": 5, "max": 10},
+    "sizes": {"min": 5, "max": 20},
     "rotate": {"speed": 1.5, "direction": null},
     "mode": {
       "type": "space",
@@ -26,9 +26,14 @@
       "speed": 0.15
     },
     "attract": {
+      "chance": 0.75,
+      "force": 1,
       "grow": 2,
-      "mode": "static",
-      "rotate": {"speed": 2, "direction": -1}
+      "size": null,
+      "type": "static",
+      "speed": 1.5,
+      "direction": -1,
+      "radius": 1
     },
     "fill": ["#6F3FF5","#02E2AC","#F35890"],
     "toColor": "#66229933",
