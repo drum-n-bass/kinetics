@@ -165,10 +165,10 @@ export default class Particle {
           break;
 
         case "horz":
-          x = Math.cos(angle) * rx + cx;
+          x = cos * rx + cx;
           break;
         case "vert":
-          y = Math.sin(angle) * ry + cy;
+          y = sin * ry + cy;
           break;
 
         case "orbit":
@@ -179,7 +179,12 @@ export default class Particle {
         case "bee":
           x = cx + Math.abs(rx) / 2 * cos * sin;
           y = cy + Math.abs(ry) * cos;
-          break
+          break;
+
+        case "swing":
+          x = cx + sin * rx;
+          y = cy + sin * ry;
+          break;
 
         default: //
           throw new Error("invalid type: " + type);
