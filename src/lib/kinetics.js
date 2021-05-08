@@ -24,7 +24,7 @@ const Kinetics = (function () {
   let _this = null;
 
   // Constructor
-  function Kinetics (options = {}) {
+  function Kinetics (options = {}, container) {
     if ( !supports() ) return console.warn("KINETICS: FAILED FEATURE TEST");  // ERROR
     _this = this;
 
@@ -34,6 +34,8 @@ const Kinetics = (function () {
 
     this.originalConfig = merge(config, options);
     this.config = this.originalConfig;
+    this.container = container;
+
     this.construct();
   };
 
@@ -99,7 +101,7 @@ const Kinetics = (function () {
     // Setup canvas element
     this.canvas = document.createElement('canvas');
     if (this.config.canvas.handlePosition) {
-      this.canvas.style.position = "fixed";
+      this.canvas.style.position = this.container ? "absolute" : "fixed";
       this.canvas.style.top = 0;
       this.canvas.style.left = 0;
       // this.canvas.style.width = "100%";
@@ -107,7 +109,7 @@ const Kinetics = (function () {
       this.canvas.style.zIndex = -1;
     }
 
-    const elem = document.body;  // TODO: ??
+    const elem = this.container || document.body;
 
     // Add canvas to element
     elem.prepend(this.canvas);
@@ -253,8 +255,11 @@ const Kinetics = (function () {
     // const { width, height } = elementDimentions(entries[0]);
     // if (!width || !height) console.warn("KINETICS: UNEXPECTED RESPONSE FROM ResizeObserver");
 
-    const width = window.innerWidth;
-    const height = window.innerHeight;
+    console.log(_this.container);
+    const width = _this.container ? _this.container.offsetWidth : window.innerWidth;
+    const height = _this.container ? _this.container.offsetHeight : window.innerHeight;
+    // const width = window.innerWidth;
+    // const height = window.innerHeight;
     if (_this.config.debug) console.log("Resize observed: Width " + width + "px, Height " + height + "px");
 
     _this.setupCanvas(width, height);

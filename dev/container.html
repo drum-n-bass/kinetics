@@ -1,0 +1,72 @@
+<!doctype html>
+<html>
+<head>
+  <title>Kinetics Dev</title>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <style>
+    body { background: #0E0333; color: #fff;}
+    .container { position: relative; background: #4444; padding: 40px 20px; }
+
+    button { padding: 1em 2em; border: solid 1px; margin: 3em 0 0 5em; cursor: pointer; border-radius: 0.25em; font-size: 120%;}
+    button:hover { opacity: 0.8; }
+    a { margin: 0.25em 0.25em; }
+  </style>
+</head>
+<body>
+
+  <div style="position: fixed; top: 1em; right: 1em; z-index: 100;">
+    <a href="#" style="color:#ff3333;border: solid 1px; padding: 0.5em;" onclick="togglePause(); return false">pause</a>
+  </div>
+
+
+  <div class="container">
+    <div data-kinetics-mode data-kinetics-mode-type="rain">
+
+      <h1>Yo 1!</h1>
+      <button data-kinetics-attraction>btn</button>
+
+    </div>
+  </div>
+
+  <br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br>
+  <div>Lorem...</div>
+  <br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br>
+  <div>Lorem...</div>
+  <br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br>
+  <div>Lorem...</div>
+  <br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br>
+  <div>Lorem...</div>
+  <br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br>
+  <div>Kinetics is sure paused by now...</div>
+
+  <!-- plugin initialization -->
+  <script src="kinetics.umd.js"></script>
+  <script>
+    document.addEventListener('DOMContentLoaded', function () {
+
+      const container = document.querySelector(".container");
+      const kinetics = new Kinetics({ debug: true }, container);
+      kinetics.interactionHook({}, container);
+
+      window.togglePause = () => kinetics.paused = !kinetics.paused;
+
+      // TODO: Multiple Kinetics on single page
+/*
+      const _all = [];
+      document.querySelectorAll(".container").forEach(container => {
+        const kinetics = new Kinetics({ debug: true }, container);
+        kinetics.interactionHook({}, container);
+        _all.push(kinetics);  // debugging
+      });
+
+      // ** TEMP: DEBUG **
+      window.togglePause = () => _all.forEach(kinetics => kinetics.paused = !kinetics.paused);
+*/
+
+    });
+  </script>
+
+
+</body>
+</html>
