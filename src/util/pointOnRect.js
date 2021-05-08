@@ -66,6 +66,11 @@ export default (x, y, minX, minY, maxX, maxY, validate) => {
   // edge case when finding midpoint intersection: m = 0/0 = NaN
   if (x === midX && y === midY) return {x: x, y: y};
 
+
+  // *** TODO: REMOVE THIS! ***
+  // it's a bypass for kinetics.container (see v0.7.5), to prevent throwing an error on "negative" scroll.
+  return {x: midX, y: midY};
+
   // Should never happen :) If it does, please tell me!
   throw "Cannot find intersection for " + [x,y]
       + " inside rectangle " + [minX, minY] + " - " + [maxX, maxY] + ".";

@@ -23,7 +23,14 @@ export default (kinetics, config = {}, scope = document) => {
     // const touchOptions = isPassiveSupported() ? { passive: true } : false;
 
     // Hook interaction events
-    element.addEventListener("mouseenter", evt => kinetics.attract(evt.target.getBoundingClientRect(), props), false);
+    element.addEventListener("mouseenter", evt => {
+      const area = evt.target.getBoundingClientRect().toJSON();
+      if (kinetics.container) {
+        area.top = evt.target.offsetTop;
+        area.left = evt.target.offsetLeft;
+      }
+      kinetics.attract(area, props)
+    }, false);
     // element.addEventListener("touchstart", evt => kinetics.attract(evt.target.getBoundingClientRect(), props), touchOptions);
 
     element.addEventListener("mouseleave", evt => kinetics.unattract(), false);

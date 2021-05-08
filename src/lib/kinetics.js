@@ -238,6 +238,7 @@ const Kinetics = (function () {
    * @param  {object} e event
    */
   const onScroll = function (e) {
+    if (_this.container) return;  // We don't need this scroll on "container", as it uses absolute positioning
     // if (_this.config.debug) console.log("scroll");
     if (_this.paused) return;
 
@@ -255,7 +256,6 @@ const Kinetics = (function () {
     // const { width, height } = elementDimentions(entries[0]);
     // if (!width || !height) console.warn("KINETICS: UNEXPECTED RESPONSE FROM ResizeObserver");
 
-    console.log(_this.container);
     const width = _this.container ? _this.container.offsetWidth : window.innerWidth;
     const height = _this.container ? _this.container.offsetHeight : window.innerHeight;
     // const width = window.innerWidth;

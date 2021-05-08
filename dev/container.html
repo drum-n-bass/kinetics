@@ -6,7 +6,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <style>
     body { background: #0E0333; color: #fff;}
-    .container { position: relative; background: #4444; padding: 40px 20px; }
+    .container { position: relative; background: #4444; padding: 40px 20px; margin-top: 10em; }
 
     button { padding: 1em 2em; border: solid 1px; margin: 3em 0 0 5em; cursor: pointer; border-radius: 0.25em; font-size: 120%;}
     button:hover { opacity: 0.8; }
@@ -19,6 +19,11 @@
     <a href="#" style="color:#ff3333;border: solid 1px; padding: 0.5em;" onclick="togglePause(); return false">pause</a>
   </div>
 
+
+  <br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br>
+  <div>Lorem...</div>
+  <br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br>
+  <div>Lorem...</div>
 
   <div class="container">
     <div data-kinetics-mode data-kinetics-mode-type="rain">
@@ -46,7 +51,7 @@
     document.addEventListener('DOMContentLoaded', function () {
 
       const container = document.querySelector(".container");
-      const kinetics = new Kinetics({ debug: true }, container);
+      const kinetics = new Kinetics({ debug: false }, container);
       kinetics.interactionHook({}, container);
 
       window.togglePause = () => kinetics.paused = !kinetics.paused;
