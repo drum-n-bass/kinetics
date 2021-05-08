@@ -14,9 +14,6 @@ export default class Particles {
     this.sides = sides;
 
     this.config = config;
-    // const { tension, friction } = config.spring;
-    // this.tension = tension;
-    // this.friction = friction;
 
     this.init();
   }
@@ -49,11 +46,12 @@ export default class Particles {
     }
   }
 
+  //////////////////////////////////////////////////
+
   draw() {
     this.resetCanvas();
     this.particles.forEach(p => p.draw());
   }
-
 
   update() {
     this.particles.forEach(p => p.update());
@@ -64,6 +62,7 @@ export default class Particles {
     // }
   }
 
+  //////////////////////////////////////////////////
 
   attract(area, config) {
     const { chance } = config;
@@ -84,45 +83,6 @@ export default class Particles {
     });
   }
 
-/*
-  pointOnRect(pos, rect) {
-
-    const w = rect.right - rect.left;
-    const h = rect.bottom - rect.top;
-    // const koter = (w + h) * 2;
-
-    const p = Math.random();
-    let x = rect.left;
-    let y = rect.top + p * h;
-    if (p>0.5) {
-      x = rect.left + p * w;
-      y = rect.top;
-    }
-
-    // if (pos < 0.25)https://openprocessing.org/sketch/138410
-
-    // else if (pos < 0.5)
-    // else if (pos < 0.75)
-    // else
-
-    // koter * pos
-
-    // if (x > rect.left + w)
-
-    // x += pos;
-    // y += pos;
-    // w -= pos  * 2
-    // h -= pos  * 2
-    // if (Math.random() <  w / (w + h)) { // top bottom
-    //   x = Math.random() * w + x;
-    //   y = Math.random() < 0.5 ? y : y + h -1;
-    // } else {
-    //   y = Math.random() * h + y;
-    //   x = Math.random() < 0.5 ? x: x + w -1;
-    // }
-    return {x, y};
-  }
-*/
 
   unattract() {
     this.particles.forEach(p => p.unattract());
@@ -132,14 +92,12 @@ export default class Particles {
   bump(x, y) {
     this.particles.forEach(p => {
       if (p.isAttracted) {
-        // console.log(p);
         const factor = 0.1;
         p.attractTo.x += x * factor;
         p.attractTo.y += y * factor;
         // seedX
         // seedY
         // size
-
       }
     });
   }
@@ -149,31 +107,29 @@ export default class Particles {
 
   scroll(diff) {
     this.particles.forEach((p,i) => {
-      // fix scrolling + attached chrome bug.  programatically make the y-axis follow scroll diff
+      // Attached scrolling fix + attached chrome bug.
+      // programatically make the y-axis follow scroll diff
       if (p.isAttracted) p.attractTo.y -= diff;
 
-      // scrolling effect
-      else p.position.y -= diff * (i%this.config.particles.parallex.layers * this.config.particles.parallex.speed);
+      // parallex effect
+      else {
+        const { layers, speed } = this.config.particles.parallex;
+        p.position.y -= diff * (i%layers * speed);
+      }
     });
-
-
   }
+
 
   resetCanvas() {
     this.ctx.clearRect(0, 0, this.width, this.height);
     // this.ctx.fillStyle =
     // this.ctx.fillRect(0, 0, this.width, this.height);
-
   }
 
   canvasResized(width, height) {
     this.width = width;
     this.height = height;
 
-    this.particles.forEach(p => {
-      p.canvasResized(width, height);
-    });
-
-
+    this.particles.forEach(p => p.canvasResized(width, height));
   }
 }

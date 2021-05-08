@@ -8,8 +8,7 @@
     "extendedRestDelay": 10
   },
   "canvas": {
-    "handlePosition": true,
-    "background": ""
+    "handlePosition": true
   },
   "particles": {
     "count": 16,

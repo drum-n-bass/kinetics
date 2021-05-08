@@ -53,9 +53,7 @@ const Kinetics = (function () {
     this.init();
     // this.setupCanvas(0,0);  // HACK: kick it once until resizeObserver is called with correct width/height
     onResizeObserved();
-
     // this.onScroll = this.onScroll.bind(this);
-    // this.kicker();
   }
 
   /**
@@ -123,10 +121,8 @@ const Kinetics = (function () {
 
 
     // ** HOOK EVENTS **
-
     window.addEventListener('resize', onResizeObserved);
     // this.resizeObserver.observe(elem);  // Element resize observer
-
     document.addEventListener('visibilitychange', onVisibilityChanged);
 
 
