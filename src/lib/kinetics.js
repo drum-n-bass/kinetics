@@ -7,40 +7,46 @@ import config from '../kinetics.config.json';
 import { version } from '../../package.json';
 
 import dpr from '../util/dpr';
-import { elementDimentions } from './events.js';
+import browsersupport from '../util/browsersupport';
+
+// import { elementDimentions } from './events.js';
 import Particles from './particles.js';
 import interactionHook from './interactionHook';
-
-// import { drawParticles } from './particles.js';
 
 const Kinetics = (function () {
   'use strict';
 
-  // super simple feature test
-  const supports = () => {
-    return !!document.querySelector && !!window.requestAnimationFrame;
-  }
+  let _this = null;  // TODO: refactor
 
-  let _this = null;
-
-  // Constructor
+  /**
+   * Kinetics initialisation
+   * @param {Object} options   (optional) Override opt
+   * @param {DOM Element} container (optional) container element
+   */
   function Kinetics (options = {}, container) {
-    if ( !supports() ) return console.warn("KINETICS: FAILED FEATURE TEST");  // ERROR
-    _this = this;
+    if ( !browsersupport() ) return console.warn("KINETICS: FAILED FEATURE TEST");  // ERROR
 
     // console.log('CONSTRUCTOR', version, options);
+    _this = this;
 
     this.destroy();  // just in case
 
-    this.originalConfig = merge(config, options);
+    // Load configuration, and merge overrides (except arrays)
+    const overwriteMerge = (destinationArray, sourceArray, options) => sourceArray;
+    this.originalConfig = merge(config, options, { arrayMerge: overwriteMerge });
     this.config = this.originalConfig;
-    this.container = container;
+
+    this.container = container;  // (optional) container element
 
     this.construct();
   };
 
   Kinetics.prototype.VERSION = version;
 
+
+  /**
+   * constructor
+   */
   Kinetics.prototype.construct = function() {
     // Destroy any existing initializations
     this.paths = [];   // init paths array
@@ -57,6 +63,7 @@ const Kinetics = (function () {
     onResizeObserved();
     // this.onScroll = this.onScroll.bind(this);
   }
+
 
   /**
   * Destroy the current initialization.
@@ -82,19 +89,10 @@ const Kinetics = (function () {
     this.config = null;  // Reset variables
   }
 
-  Kinetics.prototype.set = function(options = {}) {
-    // if (typeof options === 'object' && options !== null) {
-      this.config = merge(this.originalConfig, options);  // important: we use originalConfig (and not config). so each call to .set() resets the config back to original.
-      this.particles.set(this.config);
-    // }
-    // else this.particles.set(options);
-  }
 
-
-
-/**
- * Initialization method
- */
+  /**
+   * Init the kinetics system
+   */
   Kinetics.prototype.init = function() {
     if (this.config.debug) console.log("init", this.config);
 
@@ -117,8 +115,10 @@ const Kinetics = (function () {
     this.ctx.frameCount = 0;
     // initSprings();  // start spring system
 
-
+    // Create the particles
     this.particles = new Particles(this.ctx, this.config);
+
+    // Start the animation loop
     this.loop();
 
 
@@ -133,6 +133,28 @@ const Kinetics = (function () {
     // if (this.config.click.shuffle) document.addEventListener('click', onClick, true); // useCapture = true important !!
     onscrolling(onScroll);  // Scroll handler
   }
+
+
+  /**
+   * Main animation loop
+   */
+  Kinetics.prototype.loop = function() {
+    requestAnimationFrame(_this.loop);
+
+    if (!_this.paused) {
+      _this.particles.update();
+      _this.particles.draw();
+      _this.ctx.frameCount += 1;
+    }
+  }
+
+
+
+  // ========================================================================
+
+  /**********/
+  /* CANVAS */
+  /**********/
 
   /**
    * Setup canvas size
@@ -153,72 +175,6 @@ const Kinetics = (function () {
     if (_dpr !== 1) this.ctx.setTransform(_dpr, 0, 0, _dpr, 0, 0); // Reset context
   }
 
-  // ========================================================================
-
-  /**********/
-  /* SPRING */
-  /**********/
-
-
-  // const initSprings = function() {
-  //   const springSystem = new rebound.SpringSystem();
-  //   _this.spring = springSystem.createSpring(_this.config.spring.tension, _this.config.spring.friction);
-  //   _this.spring.addListener({
-  //     onSpringUpdate: onSpringUpdate,
-  //     onSpringAtRest: onSpringAtRest
-  //   });
-  // }
-
-  // /**
-  //  * Spring entered resting poition
-  //  */
-  // const onSpringAtRest = function(spring) {
-  //   if (_this.config.debug) console.log("onSpringAtRest");
-  //   // Activate re-chaos flag after some time
-  //   if (_this.onRestTimeout) clearTimeout(_this.onRestTimeout);
-  //   _this.onRestTimeout = setTimeout(onExtendedRest, _this.config.spring.extendedRestDelay * 1000); // when would a user normally scroll "again", while it should "feel" the same scroll?
-  // }
-
-  // /**
-  //  * Spring is in extended rest  (long time)
-  //  */
-  // const onExtendedRest = function() {
-  //   if (_this.config.debug) console.log("onExtendedRest");
-  //   if (_this.spring.isAtRest()) _this.shouldReChaos = true;
-  // }
-
-  // /**
-  //  * Spring in action
-  //  */
-  // const onSpringUpdate = function(spring) {
-  //   const val = spring.getCurrentValue();
-  //   const path = calcPath(_this.srcPath, _this.dstPath, val);
-  //   if (_this.paths.length >= _this.config.path.paths) _this.paths.shift();
-  //   _this.paths.push(path);
-
-  //   // _this.resetCanvas();
-  //   // _this.drawBackground();
-  //   // _this.drawPaths();
-  // }
-
-  // ========================================================================
-  // ========================================================================
-
-  /**********/
-  /* CANVAS */
-  /**********/
-
-  // setTimeout(() => moo = true, 1000);
-  Kinetics.prototype.loop = function() {
-    requestAnimationFrame(_this.loop);
-
-    if (!_this.paused) {
-      _this.particles.update();
-      _this.particles.draw();
-      _this.ctx.frameCount += 1;
-    }
-  }
-
 
   /**
    * Clear the canvas
@@ -231,7 +187,6 @@ const Kinetics = (function () {
   /**********
   /* EVENTS *
   /**********
-
 
   /**
    * Scroll event
@@ -258,8 +213,6 @@ const Kinetics = (function () {
 
     const width = _this.container ? _this.container.offsetWidth : window.innerWidth;
     const height = _this.container ? _this.container.offsetHeight : window.innerHeight;
-    // const width = window.innerWidth;
-    // const height = window.innerHeight;
     if (_this.config.debug) console.log("Resize observed: Width " + width + "px, Height " + height + "px");
 
     _this.setupCanvas(width, height);
@@ -283,6 +236,27 @@ const Kinetics = (function () {
   }
 
 
+
+  // ========================================================================
+
+  /*******
+     API
+   *******/
+
+  /**
+   * Update configuration options on particles system
+   * @param {Object} options Configuration object (see: kinetics.config.json)
+   */
+  Kinetics.prototype.set = function(options = {}) {
+    this.config = merge(this.originalConfig, options);  // important: we use originalConfig (and not config). so each call to .set() resets the config back to original.
+    this.particles.set(this.config);
+  }
+
+
+  /**
+   * Bump the system
+   * Currently, attached to mousemove, see: interactionHook
+   */
   Kinetics.prototype.bump = function(x, y, movementX, movementY) {
     // if (this.config.debug) console.log("bump", x, y, movementX, movementY);
     this.particles.bump(movementX, movementY);
@@ -291,18 +265,32 @@ const Kinetics = (function () {
     // this.particles.attract(area, force, gravity);
   }
 
+
+  /**
+   * Attract system to area
+   * @param  {object} area  Rectangle area object
+   * @param  {object} props configuration
+   */
   Kinetics.prototype.attract = function(area, props) {
     // if (this.config.debug) console.log("attract", area, force, gravity);
     if (this.config.debug) console.log("attract", area, props);
-    // this.particles.attract(area, props.chance, props.force, props.grow, props.type);
     this.particles.attract(area, merge(config.particles.attract, props));
   }
 
+
+  /**
+   * Unattract kinetics system
+   */
   Kinetics.prototype.unattract = function() {
     if (this.config.debug) console.log("unattract");
     this.particles.unattract();
   }
 
+  /**
+   * Helper: Initialise interactionHook
+   * @param  {object} config Configuration object
+   * @param  {DOM Element} scope  Parent element
+   */
   Kinetics.prototype.interactionHook = function(config, scope) {
     interactionHook(this, config, scope);
   }

@@ -152,28 +152,28 @@
     >circle</button> -->
   </section>
 
-  <section>
 
+  <section>
     <div style="padding: 1em;">
-      <img src="dummy.svg"
+      <img src="dummy.static.svg"
         style="max-width:30%"
         data-kinetics-attraction
         data-kinetics-attraction-chance="0.8"
         data-kinetics-attraction-force="1"
         >
-      <img src="dummy.svg"
+      <img src="dummy.static.svg"
       style="max-width:30%;margin:1em;"
         data-kinetics-attraction
         data-kinetics-attraction-chance="0.8"
         data-kinetics-attraction-force="1"
         >
-      <img src="dummy.svg"
+      <img src="dummy.static.svg"
         style="max-width:30%"
         data-kinetics-attraction
         data-kinetics-attraction-chance="0.8"
         data-kinetics-attraction-force="1"
         >
-      <img src="dummy.svg"
+      <img src="dummy.static.svg"
         style="max-width:30%"
         data-kinetics-attraction
         data-kinetics-attraction-chance="0.8"
@@ -182,8 +182,9 @@
     </div>
   </section>
 
+
   <section>
-    <h1>summy static</h1>
+    <h1>dummy static</h1>
     <div style="padding: 1em;">
       <img src="dummy.static.svg"
         style="max-width:45%"
@@ -258,7 +259,7 @@
 
 
   <!-- plugin initialization -->
-  <script src="kinetics.umd.js"></script>
+  <script src="kinetics.js"></script>
   <script>
     document.addEventListener('DOMContentLoaded', function () {
 
@@ -269,6 +270,16 @@
       // new Kinetics(); // This is enough to get things started
       // or set the override configuration
       const kinetics = new Kinetics({
+        particles: {
+        // "fill": ["#FFFFFF", "#FFFFFF", "#FFFFFF"],
+          "fill": ["#888888","#000000","#FFFFFF"],
+          "toColor": "#FFF",
+          "opacity": "",
+          "stroke": {
+            "color": "#FFFF2244",
+            "width": 15
+          }
+        }
         // particles: { count: 100, sizes: {min: 1, max:10},  mode: {type: "party" }}
         // particles: { count: 30, sizes: {min: 10, max:50}}
       });

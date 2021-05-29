@@ -18,6 +18,9 @@ export default class Particles {
     this.init();
   }
 
+  /**
+   * Init system and create particles
+   */
   init() {
     this.particles = [];
 
@@ -28,11 +31,18 @@ export default class Particles {
     }
   }
 
+  /**
+   * Remove system
+   */
   destory() {
     if (this.springSystem) this.springSystem.destory();
     this.particles.forEach(p => p.destory());
   }
 
+  /**
+   * Update system's config
+   * @param {object} config
+   */
   set(config) {
     if (!config) return;
     // else if (typeof config === "number") {
@@ -64,6 +74,11 @@ export default class Particles {
 
   //////////////////////////////////////////////////
 
+  /**
+   * Attract particles to area
+   * @param  {object} area   Rectangle area
+   * @param  {object} config Configuration
+   */
   attract(area, config) {
     const { chance } = config;
     const count = this.particles.length;
@@ -84,17 +99,25 @@ export default class Particles {
   }
 
 
+  /**
+   * Unattract particles
+   */
   unattract() {
     this.particles.forEach(p => p.unattract());
   }
 
 
+  /**
+   * Bump particles
+   * @param  {number} x
+   * @param  {number} y
+   */
   bump(x, y) {
     this.particles.forEach(p => {
       if (p.isAttracted) {
         const factor = 0.1;
-        p.attractTo.x += x * factor;
-        p.attractTo.y += y * factor;
+        p.attractPoint.x += x * factor;
+        p.attractPoint.y += y * factor;
         // seedX
         // seedY
         // size
@@ -105,13 +128,17 @@ export default class Particles {
   //   this.ctx.rotate(angle * Math.PI / 180);
   // }
 
+  /**
+   * Scroll
+   * @param  {number} diff Vertical difference
+   */
   scroll(diff) {
     this.particles.forEach((p,i) => {
       // Attached scrolling fix + attached chrome bug.
       // programatically make the y-axis follow scroll diff
-      if (p.isAttracted) p.attractTo.y -= diff;
+      if (p.isAttracted) p.attractPoint.y -= diff;
 
-      // parallex effect
+      // Parallex effect
       else {
         const { layers, speed } = this.config.particles.parallex;
         p.position.y -= diff * (i%layers * speed);
@@ -120,12 +147,18 @@ export default class Particles {
   }
 
 
+  /**
+   * Clear canvas
+   */
   resetCanvas() {
     this.ctx.clearRect(0, 0, this.width, this.height);
-    // this.ctx.fillStyle =
-    // this.ctx.fillRect(0, 0, this.width, this.height);
   }
 
+  /**
+   * Canvas size changed
+   * @param  {number} width
+   * @param  {number} height
+   */
   canvasResized(width, height) {
     this.width = width;
     this.height = height;

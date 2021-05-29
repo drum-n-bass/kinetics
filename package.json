@@ -1,10 +1,17 @@
 {
-  "name": "kinetics",
-  "version": "0.7.5",
-  "description": "",
+  "name": "@drum-n-bass/kinetics",
+  "version": "0.8.0",
+  "description": "Kinetics, attractive particles system",
+  "keywords": [
+    "particles",
+    "animation",
+    "canvas",
+    "attraction",
+    "visual"
+  ],
   "main": "index.js",
-  "browser": "dist/kinetics.umd.js",
-  "unpkg": "dist/kinetics.umd.js",
+  "browser": "dist/kinetics.js",
+  "unpkg": "dist/kinetics.js",
   "scripts": {
     "test": "echo \"*** TODO TESTS ***\" && exit 1",
     "clean": "rm -rf dist",
@@ -12,20 +19,37 @@
     "dev": "rollup -c -w --sourcemap",
     "prepublishOnly": "npm run clean && npm run test && npm run build"
   },
-  "author": "",
-  "license": "ISC",
+  "author": "drum-n-bass",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/drum-n-bass/kinetics.git"
+  },
+  "bugs": {
+    "url": "https://github.com/drum-n-bass/kinetics/issues"
+  },
+  "homepage": "https://kinetics.li",
+  "contributors": [
+    {
+      "name": "Richard Schumann",
+      "url": "https://schumanncombo.com"
+    },
+    {
+      "name": "Oori Shalev | Pluggable",
+      "url": "https://github.com/oori"
+    }
+  ],
+  "license": "MIT",
   "devDependencies": {
     "@rollup/plugin-babel": "^5.3.0",
     "@rollup/plugin-commonjs": "^19.0.0",
     "@rollup/plugin-json": "^4.1.0",
     "@rollup/plugin-node-resolve": "^13.0.0",
-    "rollup": "^2.47.0",
+    "rollup": "^2.50.3",
     "rollup-plugin-livereload": "^2.0.0",
     "rollup-plugin-serve": "^1.1.0",
     "rollup-plugin-terser": "^7.0.2"
   },
   "dependencies": {
-    "@juggle/resize-observer": "^3.3.1",
     "deepmerge": "^4.2.2",
     "onscrolling": "^1.0.0",
     "rebound": "^0.1.0"

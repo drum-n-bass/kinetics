@@ -1,8 +1,9 @@
 /**
- * Finds the intersection point between
- *     * the rectangle
+ * See: https://stackoverflow.com/a/31254199
+ *
+ * Finds the intersection point between the rectangle
  *       with parallel sides to the x and y axes
- *     * the half-line pointing towards (x,y)
+ *       the half-line pointing towards (x,y)
  *       originating from the middle of the rectangle
  *
  * Note: the function works given min[XY] <= max[XY],

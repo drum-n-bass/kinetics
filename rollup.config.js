@@ -31,7 +31,6 @@ export default [
       json(),
       commonjs({
         // namedExports: { 'rebound': [ 'rebound' ]}
-        // namedExports: { 'js-sha3': [ 'keccak256' ]}
       }), // so Rollup can convert `ms` to an ES module
       babel({
         // plugins: ['external-helpers'],
@@ -47,17 +46,5 @@ export default [
       }),
       !production && livereload(buildDir)
     ]
-  },
-
-  // CommonJS (for Node) and ES module (for bundlers) build.
-/*
-  {
-    input: 'src/index.js',
-    output: [
-      { file: transformBuildDir(pkg.main), format: 'cjs' },
-      { file: transformBuildDir(pkg.module), format: 'es' }
-    ],
-    external: [ 'js-sha3' ]
   }
-*/
 ];
