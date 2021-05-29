@@ -44,6 +44,37 @@ const kinetics = new Kinetics(params).interactionHook();
 ```
 
 
+Data-Atributes
+---
+```html
+
+// enable attraction for an element
+data-kinetics-attraction
+
+// you can pass attraction params to it like this
+data-kinetics-attraction="{chance:1, force:1, type:orbit, ...}"
+
+// set a ratio of particles that will attract
+data-kinetics-attraction-chance="" 
+
+// set element's force of attraction
+data-kinetics-attraction-force=""
+
+// set the animation preset for attracted particles
+data-kinetics-attraction-type=""
+
+// set attracted particles size based on it's current size
+data-kinetics-attraction-grow=""
+
+// set attracted particles size to a fixed size in pixels
+data-kinetics-attraction-size=""
+
+```
+
+
+
+
+
 Params
 ---
 > See [default params](src/params.json)
