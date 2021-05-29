@@ -1,6 +1,6 @@
 {
   "name": "@drum-n-bass/kinetics",
-  "version": "0.8.0",
+  "version": "0.8.1",
   "description": "Kinetics, attractive particles system",
   "keywords": [
     "particles",
@@ -12,8 +12,9 @@
   "main": "index.js",
   "browser": "dist/kinetics.js",
   "unpkg": "dist/kinetics.js",
+  "files": [ "dist" ],
   "scripts": {
-    "test": "echo \"*** TODO TESTS ***\" && exit 1",
+    "test": "echo \"*** TODO TESTS ***\"",
     "clean": "rm -rf dist",
     "build": "rollup -c --environment BUILD:production",
     "dev": "rollup -c -w --sourcemap",
