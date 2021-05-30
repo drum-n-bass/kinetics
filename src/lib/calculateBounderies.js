@@ -1,6 +1,12 @@
 export default (mode, point, maxsize, flip, bounderyWidth, bounderyHeight) => {
 	let {x, y} = point;
-	const gap = maxsize / 2;
+	let gap = maxsize;
+	if (mode === "pong") gap /= 2;	// on pong, we want it to bounce from the center of the shape, approx divide by two.
+																	// This needs to be dynamic.  based on calculated shape (`vertices`) + stroke + grow?
+																	// Can results in ugly "edge disapear/popping" bug, visible on pointy shapes with large stroke width, and "wind" mode.
+																	// Temp solution can be to add manual param `gap = maxsize * bounderyGapFactor` ?
+
+
 
 	let outside = "";
 	if (x > (bounderyWidth + gap)) outside = "right";
