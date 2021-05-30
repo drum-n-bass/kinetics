@@ -6,12 +6,12 @@ import getNumberInRange from '../util/getNumberInRange.js';
 
 export default class Particle {
 
-	/**
-	 * Particle constructor
-	 * @param  {object} ctx          Canvas context
-	 * @param  {object} config       Configuration
-	 * @param  {object} springSystem Spring system
-	 */
+  /**
+   * Particle constructor
+   * @param  {object} ctx          Canvas context
+   * @param  {object} config       Configuration
+   * @param  {object} springSystem Spring system
+   */
   constructor(ctx, config, springSystem) {
     this.ctx = ctx;
     this.config = config;
@@ -24,11 +24,11 @@ export default class Particle {
     // a random number, index position in arrays (fill, colors, more?)
     const randomIndex = arr => Math.floor(Math.random() * arr.length);
     this.indexes = {
-    	fill: randomIndex(fill.colors),
-    	fillTo: randomIndex(fill.toColors),
-    	stroke: randomIndex(stroke.colors),
-    	strokeTo: randomIndex(stroke.toColors),
-    	strokeWidth: randomIndex(stroke.width)
+      fill: randomIndex(fill.colors),
+      fillTo: randomIndex(fill.toColors),
+      stroke: randomIndex(stroke.colors),
+      strokeTo: randomIndex(stroke.toColors),
+      strokeWidth: randomIndex(stroke.width)
     };
 
     // init values
@@ -267,27 +267,27 @@ export default class Particle {
     const { fill, stroke } = this.config.particles;
 
     // ** FILL **
-    if (fill.colors.length) {	// any colors in the array?
-	    let fillColor = this.idxValue(fill.colors,'fill');
-	    if (fill.toColors.length) {
-		    fillColor = rebound.MathUtil.interpolateColor(this.colorPosition(), fillColor, this.idxValue(fill.toColors,'fillTo'));
-	    }
-	    this.ctx.fillStyle = fillColor + this.float2hex(fill.opacity);
-	    this.ctx.fill();
-	  }
+    if (fill.colors.length) { // any colors in the array?
+      let fillColor = this.idxValue(fill.colors,'fill');
+      if (fill.toColors.length) {
+        fillColor = rebound.MathUtil.interpolateColor(this.colorPosition(), fillColor, this.idxValue(fill.toColors,'fillTo'));
+      }
+      this.ctx.fillStyle = fillColor + this.float2hex(fill.opacity);
+      this.ctx.fill();
+    }
 
     // ** STROKE **
-    if (stroke.colors.length) {	// any colors in the array?
-    	const strokeWidth = this.idxValue(stroke.width,'strokeWidth');
-    	if (strokeWidth > 0) {  	// valid stroke width?
-	    	let strokeColor = this.idxValue(stroke.colors,'stroke');
-		    if (stroke.toColors.length)
-			    strokeColor = rebound.MathUtil.interpolateColor(this.colorPosition(), strokeColor, this.idxValue(stroke.toColors,'strokeTo'));
+    if (stroke.colors.length) { // any colors in the array?
+      const strokeWidth = this.idxValue(stroke.width,'strokeWidth');
+      if (strokeWidth > 0) {    // valid stroke width?
+        let strokeColor = this.idxValue(stroke.colors,'stroke');
+        if (stroke.toColors.length)
+          strokeColor = rebound.MathUtil.interpolateColor(this.colorPosition(), strokeColor, this.idxValue(stroke.toColors,'strokeTo'));
 
-	      this.ctx.strokeStyle = strokeColor + this.float2hex(stroke.opacity);
-	      this.ctx.lineWidth = strokeWidth;
-	      this.ctx.stroke();
-    	}
+        this.ctx.strokeStyle = strokeColor + this.float2hex(stroke.opacity);
+        this.ctx.lineWidth = strokeWidth;
+        this.ctx.stroke();
+      }
     }
   }
 
@@ -299,30 +299,30 @@ export default class Particle {
    * Calculate color position in interpolation
    * @return {number} Current position
    */
-	colorPosition() {
-		return Math.abs(
-			Math.sin(this.ctx.frameCount * this.seeds.x * Math.PI / 180)
-		);
-	}
+  colorPosition() {
+    return Math.abs(
+      Math.sin(this.ctx.frameCount * this.seeds.x * Math.PI / 180)
+    );
+  }
 
-	/**
-	 * float to HEX
-	 * with limiter (0-1 --> 00-ff)
-	 * @param  {number} f input float
-	 * @return {string}   HEX value
-	 */
-	float2hex(f) {
-		return (Number.isNaN(f) || f < 0 || f > 1) ? ''
-					: Math.floor(f * 255).toString(16).padStart(2, 0);
-	}
+  /**
+   * float to HEX
+   * with limiter (0-1 --> 00-ff)
+   * @param  {number} f input float
+   * @return {string}   HEX value
+   */
+  float2hex(f) {
+    return (Number.isNaN(f) || f < 0 || f > 1) ? ''
+          : Math.floor(f * 255).toString(16).padStart(2, 0);
+  }
 
-	/**
-	 * Get indexed value from array
-	 * @param  {Array} arr input array
-	 * @param  {number} idx Index to fetch
-	 * @return {*|null}     Value or null if invalid
-	 */
+  /**
+   * Get indexed value from array
+   * @param  {Array} arr input array
+   * @param  {number} idx Index to fetch
+   * @return {*|null}     Value or null if invalid
+   */
   idxValue(arr, idx) {
-		return arr.length ? arr[this.indexes[idx]] : null;
+    return arr.length ? arr[this.indexes[idx]] : null;
   }
 }

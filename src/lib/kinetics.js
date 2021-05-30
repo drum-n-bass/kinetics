@@ -35,7 +35,7 @@ const Kinetics = (function () {
 
     // Load configuration
     this.config = configParser(merge(defaultConfig, options, mergeOptions));
-    this.originalConfig = merge({}, this.config);	// clone it
+    this.originalConfig = merge({}, this.config);  // clone it
 
     this.container = container;  // (optional) container element
 
