@@ -3,11 +3,12 @@ import merge from 'deepmerge';
 import onscrolling from 'onscrolling';
 // import { ResizeObserver as Ponyfill_RO } from '@juggle/resize-observer';
 
-import config from '../kinetics.config.json';
+import defaultConfig from '../kinetics.config.json';
 import { version } from '../../package.json';
 
 import dpr from '../util/dpr';
 import browsersupport from '../util/browsersupport';
+import configParser from '../util/configParser';
 
 // import { elementDimentions } from './events.js';
 import Particles from './particles.js';
@@ -17,6 +18,7 @@ const Kinetics = (function () {
   'use strict';
 
   let _this = null;  // TODO: refactor
+  const mergeOptions = { arrayMerge: (destinationArray, sourceArray, options) => sourceArray };
 
   /**
    * Kinetics initialisation
@@ -31,10 +33,9 @@ const Kinetics = (function () {
 
     this.destroy();  // just in case
 
-    // Load configuration, and merge overrides (except arrays)
-    const overwriteMerge = (destinationArray, sourceArray, options) => sourceArray;
-    this.originalConfig = merge(config, options, { arrayMerge: overwriteMerge });
-    this.config = this.originalConfig;
+    // Load configuration
+    this.config = configParser(merge(defaultConfig, options, mergeOptions));
+    this.originalConfig = merge({}, this.config);	// clone it
 
     this.container = container;  // (optional) container element
 
@@ -230,7 +231,7 @@ const Kinetics = (function () {
 
 
   const onVisibilityChanged = function() {
-    console.log("onVisibilityChanged");
+    // console.log("onVisibilityChanged");
     _this.paused = document.visibilityState === 'hidden'
     if (_this.config.debug) console.log("Paused", _this.paused);
   }
@@ -248,7 +249,7 @@ const Kinetics = (function () {
    * @param {Object} options Configuration object (see: kinetics.config.json)
    */
   Kinetics.prototype.set = function(options = {}) {
-    this.config = merge(this.originalConfig, options);  // important: we use originalConfig (and not config). so each call to .set() resets the config back to original.
+    this.config = configParser(merge(this.originalConfig, options, mergeOptions));  // important: we use originalConfig (and not config). so each call to .set() resets the config back to original.
     this.particles.set(this.config);
   }
 
@@ -274,7 +275,8 @@ const Kinetics = (function () {
   Kinetics.prototype.attract = function(area, props) {
     // if (this.config.debug) console.log("attract", area, force, gravity);
     if (this.config.debug) console.log("attract", area, props);
-    this.particles.attract(area, merge(config.particles.attract, props));
+
+    this.particles.attract(area, configParser(merge(this.config.particles.attract, props)));
   }
 
 
