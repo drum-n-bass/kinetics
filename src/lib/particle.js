@@ -15,14 +15,21 @@ export default class Particle {
   constructor(ctx, config, springSystem) {
     this.ctx = ctx;
     this.config = config;
-    const { particles: { sides, fill } } = config;
+    const { particles: { sides, fill, stroke } } = config;
 
     this.sides = getNumberInRange(sides);
     this.sidesSeeds = Array.from(Array(this.sides)).map((_,i) => Math.random());
     // this.life = 999;  // TODO
 
-    // a random number, idx position in "fill" colors array
-    this.color = Math.floor(Math.random() * fill.length);  // select initial color
+    // a random number, index position in arrays (fill, colors, more?)
+    const randomIndex = arr => Math.floor(Math.random() * arr.length);
+    this.indexes = {
+    	fill: randomIndex(fill.colors),
+    	fillTo: randomIndex(fill.toColors),
+    	stroke: randomIndex(stroke.colors),
+    	strokeTo: randomIndex(stroke.toColors),
+    	strokeWidth: randomIndex(stroke.width)
+    };
 
     // init values
     this.seeds = { x: Math.random(), y: Math.random() };
@@ -158,7 +165,8 @@ export default class Particle {
     pos = calculateMovement(type, pos, speed, this.flip, this.seeds);
 
     // Bounderies
-    const maxsize = this.config.particles.sizes.max;  // used to enlarge range with
+    const { sizes: { max }, stroke: { width }} = this.config.particles;
+    const maxsize = max + this.idxValue(width,'strokeWidth');
     pos = calculateBounderies(boundery, pos, maxsize, this.flip, this.canvasWidth, this.canvasHeight);
 
     // TODO: (is this meaningful?) performance, less sub-pixel rendering
@@ -255,22 +263,66 @@ export default class Particle {
     this.ctx.closePath();
 
 
-    // ** COLOR **
-    const { fill, opacity, stroke, toColor } = this.config.particles;
-    const pos = Math.abs(Math.sin(this.ctx.frameCount * this.seeds.x * Math.PI / 180));
-    // this.color++; if (this.color >= fill.length) this.color = 0;  // TODO: HACK
-    const fromColor = fill[this.color];
-    const color = rebound.MathUtil.interpolateColor(pos, fromColor, toColor);
+    // ** FILL **
+    const { fill, stroke } = this.config.particles;
 
     // ** FILL **
-    this.ctx.fillStyle = color + opacity;
-    this.ctx.fill();
+    if (fill.colors.length) {	// any colors in the array?
+	    let fillColor = this.idxValue(fill.colors,'fill');
+	    if (fill.toColors.length) {
+		    fillColor = rebound.MathUtil.interpolateColor(this.colorPosition(), fillColor, this.idxValue(fill.toColors,'fillTo'));
+	    }
+	    this.ctx.fillStyle = fillColor + this.float2hex(fill.opacity);
+	    this.ctx.fill();
+	  }
 
     // ** STROKE **
-    if (stroke.color) {
-      this.ctx.strokeStyle = stroke.color + opacity;
-      this.ctx.lineWidth = stroke.width;
-      this.ctx.stroke();
+    if (stroke.colors.length) {	// any colors in the array?
+    	const strokeWidth = this.idxValue(stroke.width,'strokeWidth');
+    	if (strokeWidth > 0) {  	// valid stroke width?
+	    	let strokeColor = this.idxValue(stroke.colors,'stroke');
+		    if (stroke.toColors.length)
+			    strokeColor = rebound.MathUtil.interpolateColor(this.colorPosition(), strokeColor, this.idxValue(stroke.toColors,'strokeTo'));
+
+	      this.ctx.strokeStyle = strokeColor + this.float2hex(stroke.opacity);
+	      this.ctx.lineWidth = strokeWidth;
+	      this.ctx.stroke();
+    	}
     }
+  }
+
+
+  // ========================================================================
+
+
+  /**
+   * Calculate color position in interpolation
+   * @return {number} Current position
+   */
+	colorPosition() {
+		return Math.abs(
+			Math.sin(this.ctx.frameCount * this.seeds.x * Math.PI / 180)
+		);
+	}
+
+	/**
+	 * float to HEX
+	 * with limiter (0-1 --> 00-ff)
+	 * @param  {number} f input float
+	 * @return {string}   HEX value
+	 */
+	float2hex(f) {
+		return (Number.isNaN(f) || f < 0 || f > 1) ? ''
+					: Math.floor(f * 255).toString(16).padStart(2, 0);
+	}
+
+	/**
+	 * Get indexed value from array
+	 * @param  {Array} arr input array
+	 * @param  {number} idx Index to fetch
+	 * @return {*|null}     Value or null if invalid
+	 */
+  idxValue(arr, idx) {
+		return arr.length ? arr[this.indexes[idx]] : null;
   }
 }

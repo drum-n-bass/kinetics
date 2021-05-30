@@ -12,11 +12,11 @@
   },
   "particles": {
     "count": 16,
-    "sides": {"min": 3, "max": 5},
-    "sizes": {"min": 5, "max": 20},
+    "sides": {"min": 3, "max": 4},
+    "sizes": {"min": 5, "max": 50},
     "rotate": {"speed": 1.5, "direction": null},
     "mode": {
-      "type": "space",
+      "type": "linear",
       "speed": 2,
       "boundery": "endless"
     },
@@ -27,19 +27,23 @@
     "attract": {
       "chance": 0.75,
       "force": 1,
-      "grow": 2,
+      "grow": "random(1,4)",
       "size": null,
       "type": "static",
       "speed": 1.5,
       "direction": -1,
       "radius": 1
     },
-    "fill": ["#6F3FF5","#02E2AC","#F35890"],
-    "toColor": "#66229933",
-    "opacity": "DD",
+    "fill": {
+      "colors": ["#FFD166", "#EF476F", "#06D6A0", "#118AB2"],
+      "toColors": ["#FFD166", "#EF476F", "#06D6A0", "#118AB2"],
+      "opacity": 1
+    },
     "stroke": {
-      "color": "",
-      "width": 1
+      "colors": [],
+      "toColors": [],
+      "opacity": 0,
+      "width": []
     }
   }
 }
